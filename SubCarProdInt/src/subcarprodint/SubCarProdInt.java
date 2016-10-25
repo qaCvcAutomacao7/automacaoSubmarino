@@ -17,13 +17,39 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.GregorianCalendar;
+
 public class SubCarProdInt {
     public static void main(String[] args) throws InterruptedException, IOException {
-System.setProperty("webdriver.gecko.driver", "C:\\geckodriver-v0.10.0-win64\\geckodriver.exe");
+    System.setProperty("webdriver.gecko.driver", "C:\\geckodriver-v0.10.0-win64\\geckodriver.exe");
         WebDriver driver= new FirefoxDriver();
-        openHome(driver);
-        masterPrice(driver);
+        try{
+                openHome(driver);
+                }catch (InterruptedException | IOException h){
+                System.out.println("Falha preenchimento Home");
+                ScreenShotErro(driver);
+                driver.navigate().refresh();
+                openHome(driver);
+            }
+        //MasterPrice
+        try{
+            masterPrice(driver);
+            }catch (InterruptedException | IOException m){
+            System.out.println("Erro na MasterPrice");
+            ScreenShotErro(driver);
+            driver.navigate().refresh();
+            masterPrice(driver);
+            }
+        //CheckOut
+        try{
         checkout(driver);
+        }catch (InterruptedException | IOException k){
+            System.out.println("Erro na checkout");
+            ScreenShotErro(driver);
+            driver.navigate().refresh();
+            checkout(driver);
+    }
+        Thread.sleep(1000); 
+        driver.quit();
     }
     //Metodo Preencher Motor de Busca Carros - Home
         private static void openHome(WebDriver driver) throws InterruptedException, IOException {
@@ -49,17 +75,15 @@ System.setProperty("webdriver.gecko.driver", "C:\\geckodriver-v0.10.0-win64\\gec
         SimpleDateFormat formataData = new SimpleDateFormat("dd/MM/yyyy");
         String ida = formataData.format(x);
         String volta = formataData.format(y); 
-        
         driver.findElement(By.id("carStartDate")).sendKeys(ida);//data ida
         driver.findElement(By.id("carEndDate")).sendKeys(volta);//data volta
         ScreenShot (driver);//print da tela
         driver.findElement(By.id("btnSearch")).click();//comprar
-        
     }
         //Método Master Price
         private static void masterPrice(WebDriver driver) throws InterruptedException, IOException {
         ExplicitWait(driver, "html/body/div[3]/div[3]/div/div/div[2]/div[2]/div[2]/div[1]/div[2]/table/thead/tr/th[1]");
-        driver.findElement(By.xpath("html/body/div[3]/div[3]/div/div/div[2]/div[2]/div[2]/div[1]/div[2]/table/tbody/tr[1]/td[1]/a")).click();//Movida
+        driver.findElement(By.xpath("html/body/div[3]/div[3]/div/div/div[2]/div[2]/div[2]/div[1]/div[2]/table/tbody/tr[1]/td[1]/a")).click();
         ExplicitWait(driver, "html/body/div[3]/div[3]/div/div/div[2]/div[2]/div[2]/div[6]/div[2]/div/div/div[2]/div[3]/a");
         Thread.sleep(1000);
         driver.findElement(By.xpath("html/body/div[3]/div[3]/div/div/div[2]/div[2]/div[2]/div[6]/div[2]/div/div/div[2]/div[3]/a")).click();//Botão Alugar
@@ -73,7 +97,7 @@ System.setProperty("webdriver.gecko.driver", "C:\\geckodriver-v0.10.0-win64\\gec
         //Metodo Checkout
         private static void checkout(WebDriver driver) throws InterruptedException, IOException {
        ExplicitWait(driver, "html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/ul/li/label");//Aguarda carregar preço
-        driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/section[1]/div/div[1]/label[1]/input")).sendKeys("Qamila");
+        driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/section[1]/div/div[1]/label[1]/input")).sendKeys("Qamilas");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/section[1]/div/div[1]/label[2]/input")).sendKeys("Munizz");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/section[1]/div/div[2]/label/input")).sendKeys("12/12/1990");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/section[1]/div/div[3]/label/input")).sendKeys("12/12/2009");
@@ -87,11 +111,11 @@ System.setProperty("webdriver.gecko.driver", "C:\\geckodriver-v0.10.0-win64\\gec
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[3]/div[1]/div[2]/label[1]/input")).sendKeys("4242 4242 4242 4242");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[3]/div[1]/div[2]/div/select[1]")).sendKeys("12");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[3]/div[1]/div[2]/div/select[2]")).sendKeys("23");
-        driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[3]/div[1]/div[2]/label[2]/input")).sendKeys("Qamila Munizz");
+        driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[3]/div[1]/div[2]/label[2]/input")).sendKeys("Qamilas Munizz");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[3]/div[2]/div[2]/label/input")).sendKeys("111");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[4]/div[2]/div[1]/label/input")).sendKeys("12/12/1990");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[4]/div[2]/div[1]/div/label[1]/input")).click();
-        driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[4]/div[2]/div[2]/label/input")).sendKeys("86385788733");
+        driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[4]/div[2]/div[2]/label/input")).sendKeys("86900909086");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[4]/div[2]/div[2]/div/input[1]")).sendKeys("11");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[4]/div[2]/div[2]/div/input[2]")).sendKeys("67549878");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/div[2]/div[4]/div[2]/div[3]/input")).sendKeys("06210100");
@@ -117,8 +141,20 @@ System.setProperty("webdriver.gecko.driver", "C:\\geckodriver-v0.10.0-win64\\gec
        SimpleDateFormat formataData = new SimpleDateFormat("HHmmss");
        calendar.setTime(x);
        String data = formataData.format(x);
-       FileUtils.copyFile(print, new File("C:\\Users\\subt000079\\Pictures\\"+data+"-Print_Auto.jpg"));
-       
+       String HostName = System.getProperty("user.name");
+         System.out.println (HostName);
+       FileUtils.copyFile(print, new File("C:\\Users\\"+HostName+"\\Pictures\\"+data+"-SubCarProdInt.jpg"));
+   }
+    public static void ScreenShotErro(WebDriver driver) throws IOException{
+       System.out.println("automationsubprod.AutomationSubProd.ScreenShot()");
+       File print =((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+       Calendar calendar = new GregorianCalendar();
+       Date x = new Date();
+       SimpleDateFormat formataData = new SimpleDateFormat("HHmmss");
+       calendar.setTime(x);
+       String data = formataData.format(x);
+       String HostName = System.getProperty("user.name");
+       FileUtils.copyFile(print, new File("C:\\Users\\"+HostName+"\\Pictures\\"+data+"-SubCarProdInt_Erro.jpg"));
    }
     public static void reservasTxt(WebDriver driver) throws IOException {
     Calendar calendar = new GregorianCalendar();
@@ -127,7 +163,8 @@ System.setProperty("webdriver.gecko.driver", "C:\\geckodriver-v0.10.0-win64\\gec
     String hora = out.format(date);
     calendar.setTime(date);
     System.out.println(out.format(calendar.getTime()));
-        try (FileWriter arq = new FileWriter("C:\\Users\\subt000079\\Documents\\Reservas\\"+hora+"-reservasCarNacSubProd.txt")) {
+    String HostName = System.getProperty("user.name");
+        try (FileWriter arq = new FileWriter("C:\\Users\\"+HostName+"\\Documents\\"+hora+"-SubCarProdInt.txt")) {
             PrintWriter gravarArq = new PrintWriter(arq);
             WebElement elemento = driver.findElement(By.xpath("html/body/form/div/div/div/div[2]/div/div/div[1]/p/span/strong/a"));
             gravarArq.printf(elemento.getText());

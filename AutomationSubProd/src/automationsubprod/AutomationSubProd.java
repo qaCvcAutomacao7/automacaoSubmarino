@@ -28,6 +28,7 @@ public class AutomationSubProd {
                 openHome(driver);
             }catch (Exception h){
                 System.out.println("Falha preenchimento Home");
+                GrabScreenShot(driver);
                 driver.navigate().refresh();
                 openHomeAlternative(driver);
             }
@@ -36,6 +37,7 @@ public class AutomationSubProd {
             masterPrice(driver);
             }catch (Exception m){
             System.out.println("Erro na MasterPrice");
+            GrabScreenShot(driver);
             driver.navigate().refresh();
             masterPrice(driver);
             }
@@ -44,6 +46,7 @@ public class AutomationSubProd {
         checkout(driver);
         }catch (Exception k){
             System.out.println("Erro na checkout");
+            GrabScreenShot(driver);
             driver.navigate().refresh();
             checkout(driver);
         }   
@@ -171,7 +174,7 @@ public class AutomationSubProd {
      */
     public static void reservasTxt(WebDriver driver) throws IOException {
 
-    FileWriter arq = new FileWriter("C:\\Users\\subt000079\\Documents\\Reservas\\reservasAirNacSubProd.txt");
+    FileWriter arq = new FileWriter("C:\\Users\\subt000079\\Documents\\reservasAirNacSubProd.txt");
     PrintWriter gravarArq = new PrintWriter(arq);
     WebElement elemento = driver.findElement(By.xpath("html/body/form/div/div/div/div[2]/div/div/div[1]/p/span/strong/a"));
     gravarArq.printf(elemento.getText());
