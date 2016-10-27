@@ -1,4 +1,4 @@
-package subpacprod;
+package subpacprodint;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -19,10 +19,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-public class SubPacProd {
-    
-    public static void main(String[] args) throws InterruptedException, IOException {
-        System.setProperty("webdriver.gecko.driver", "C:\\geckodriver-v0.10.0-win64\\geckodriver.exe");
+public class SubPacProdInt {
+    public static void main(String[] args) throws IOException, InterruptedException {
+System.setProperty("webdriver.gecko.driver", "C:\\geckodriver-v0.10.0-win64\\geckodriver.exe");
         WebDriver driver= new FirefoxDriver();
         //Home Pacote
         try{
@@ -56,25 +55,24 @@ public class SubPacProd {
     }
     private static void openHome(WebDriver driver) throws InterruptedException, IOException {
         driver.get("http://www.submarinoviagens.com.br/index.aspx"); 
-        //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver.manage().deleteAllCookies();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        //driver.manage().deleteAllCookies();
         //Actions actions = new Actions(driver);
         //actions.keyDown(Keys.CONTROL).sendKeys(Keys.F5).perform();
         driver.findElement(By.xpath("html/body/form/div/div[1]/div[2]/div[2]/ul/li[1]")).click();//Pacote Nac
         driver.findElement(By.id("cvcPackageRadio")).click();//Pacote
         driver.findElement(By.id("txtPackageCVCDeparture")).click();//Pacote
+        driver.findElement(By.xpath("html/body/form/div/div[1]/div[2]/div[2]/div/div/div[3]/div[1]/div/div[2]/label")).click();
+        Thread.sleep(3000);
             WebElement origem = driver.findElement(By.id("txtPackageCVCDeparture"));
-            origem.click();
             origem.sendKeys("Sao Paulo");
-            //origem.click();
-            Thread.sleep(1000);
+        Thread.sleep(3000);
             origem.sendKeys(Keys.DOWN);
-        Thread.sleep(1000);
+        //Thread.sleep(3000);
             origem.sendKeys(Keys.TAB);
-        Thread.sleep(1000);
+        //Thread.sleep(1000);
             WebElement destino = driver.findElement(By.id("txtPackageCVCDestination"));
-            destino.click();
-            destino.sendKeys("Rio de Janeiro");
+            destino.sendKeys("Buenos");
         //Thread.sleep(10000);
             destino.sendKeys(Keys.DOWN);
         //Thread.sleep(3000);
@@ -173,4 +171,6 @@ public class SubPacProd {
    }
 }
 
+    
+    
 
