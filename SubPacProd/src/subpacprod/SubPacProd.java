@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
@@ -17,6 +18,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 public class SubPacProd {
@@ -63,15 +65,26 @@ public class SubPacProd {
         driver.findElement(By.xpath("html/body/form/div/div[1]/div[2]/div[2]/ul/li[1]")).click();//Pacote Nac
         driver.findElement(By.id("cvcPackageRadio")).click();//Pacote
         driver.findElement(By.id("txtPackageCVCDeparture")).click();//Pacote
-            WebElement origem = driver.findElement(By.id("txtPackageCVCDeparture"));
+        
+             WebElement origem = driver.findElement(By.id("txtPackageCVCDeparture"));
             origem.click();
-            origem.sendKeys("Sao Paulo");
+            origem.sendKeys("São Paulo");
             //origem.click();
-            Thread.sleep(1000);
-            origem.sendKeys(Keys.DOWN);
-        Thread.sleep(1000);
-            origem.sendKeys(Keys.TAB);
-        Thread.sleep(1000);
+            ExplicitWait(driver,"ui-active-menuitem");
+            //Thread.sleep(12000);
+            origem.click();
+           List<WebElement> liItems = driver.findElements(By.xpath("html/body/ul/li/a"));
+
+            
+             for(WebElement liItem:liItems)
+            {
+                 liItem.click();
+            }
+            Thread.sleep(12000);
+        //    origem.sendKeys(Keys.DOWN);
+       // Thread.sleep(3000);
+        //    origem.sendKeys(Keys.TAB);
+      //  Thread.sleep(3000);
             WebElement destino = driver.findElement(By.id("txtPackageCVCDestination"));
             destino.click();
             destino.sendKeys("Rio de Janeiro");

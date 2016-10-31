@@ -23,38 +23,17 @@ public class SubAirProdInt {
     System.setProperty("webdriver.gecko.driver", "C:\\geckodriver-v0.10.0-win64\\geckodriver.exe");
         WebDriver driver= new FirefoxDriver();
         //Home Aereo Int
-        try{
-                openHome(driver);
-            }catch (InterruptedException | IOException h){
-                System.out.println("Falha preenchimento Home");
-                GrabScreenShotErro(driver);
-                driver.navigate().refresh();
-                openHome(driver);
-            }
-        //MasterPrice
-        try{
-            masterPrice(driver);
-            }catch (InterruptedException | IOException m){
-            System.out.println("Erro na MasterPrice");
-            GrabScreenShotErro(driver);
-            driver.navigate().refresh();
-            masterPrice(driver);
-            }
-        //CheckOut
-        try{
+        openHome(driver);
+        masterPrice(driver);
         checkout(driver);
-        }catch (InterruptedException | IOException k){
-            System.out.println("Erro na checkout");
-            GrabScreenShotErro(driver);
-            driver.navigate().refresh();
-            checkout(driver);
-    }
-        Thread.sleep(1000); 
-        driver.quit();
+            Thread.sleep(1000); 
+            //driver.quit();apresenta poupup de erro
+            driver.close();
 }
    private static void openHome(WebDriver driver) throws InterruptedException, IOException {
-        driver.get("http://www.submarinoviagens.com.br/index.aspx"); 
-        driver.findElement(By.xpath(".//*[@id='searchEngine']/ul/li[2]")).click();//passagens aereas Int
+       driver.manage().deleteAllCookies(); 
+       driver.get("http://www.submarinoviagens.com.br/index.aspx"); 
+        driver.findElement(By.xpath(".//*[@id='searchEngine']/ul/li[2]")).click();//Passagens Aereas Int
         driver.findElement(By.xpath(".//*[@id='txtOrigin']")).clear();
         driver.findElement(By.xpath(".//*[@id='txtOrigin']")).sendKeys("sao");
                 Thread.sleep(3000);      
@@ -79,19 +58,69 @@ public class SubAirProdInt {
         SimpleDateFormat formataData = new SimpleDateFormat("dd/MM/yyyy");
         String ida = formataData.format(x);
         String volta = formataData.format(y); 
-        driver.findElement(By.id("txtOutboundPackage")).sendKeys(ida);//data ida
-        driver.findElement(By.id("txtInboundPackage")).sendKeys(volta);//data volta
-        driver.findElement(By.xpath("html/body/form/div/div[1]/div[2]/div[2]/div/div/div[2]/div[2]/div/div[1]/select")).click();
-        driver.findElement(By.xpath("html/body/form/div/div[1]/div[2]/div[2]/div/div/div[2]/a")).click();
-        GrabScreenShot (driver);//print da tela
+        driver.findElement(By.id("txtOutboundPackage")).sendKeys(ida);//Data ida
+        driver.findElement(By.id("txtInboundPackage")).sendKeys(volta);//Data volta
+        driver.findElement(By.id("btnSearch")).click();//Comprar
+        try{
+            driver.findElement(By.id("dialogModal")).isDisplayed();//PoupUp no motor de Busca?
+            System.out.println("Apresentado poupup de erro no motor de busca");
+            GrabScreenShotErro(driver);//Print de Erro.
+            Thread.sleep(1000); 
+            driver.quit();
+        }catch(Exception a){
+            GrabScreenShot (driver);//Print da tela Home.  
+            System.out.println("Efetuado print Home com Sucesso "+a);
+        }
     }
    private static void masterPrice(WebDriver driver) throws InterruptedException, IOException {
-        ExplicitWait(driver, "html/body/form/div/div/div/div[2]/div/div[2]/div[3]/div/div/ul/li[1]/a");
+       try{
+           ExplicitWait(driver, "html/body/form/div/div/div/div[2]/div/div[2]/div[3]/div/div/ul/li[1]/a");
+       } catch(Exception l){
+           try{
+               driver.navigate().refresh();
+               ExplicitWait(driver, "html/body/form/div/div/div/div[2]/div/div[2]/div[3]/div/div/ul/li[1]/a");
+           }catch(Exception j){
+               System.out.println("Erro timeout MasterPrice "+j);
+           }
+           System.out.println("Erro master Price "+l);
+                driver.findElement(By.className("error1")).isDisplayed();//Não tem disponibilidade.
+                System.out.println("Não tem disponibilidade.");
+                GrabScreenShotErro(driver);//Print de Erro
+                System.out.println("Feito print de erro.");
+                Thread.sleep(1000); 
+                driver.quit();//Fecha navegador.
+       }
         driver.findElement(By.xpath("html/body/form/div/div/div/div[2]/div/div[5]/div[3]/ul/li[1]/div[1]/div/a[1]")).click();//comprar 
+        try{
+                Thread.sleep(3000); 
+                driver.findElement(By.xpath("html/body/div[18]/div/div/div/button")).isDisplayed();//Valida preenchimento Tipo de Quarto.
+                driver.findElement(By.xpath("html/body/div[18]/div/div/div/button")).click();//Seleciona um quarto.
+        }catch(Exception c){
+                System.out.println("Não precisou selecionar quarto "+c);
+        }
         GrabScreenShot (driver);//print da tela
         }
    private static void checkout(WebDriver driver) throws InterruptedException, IOException {
-       ExplicitWait(driver, "html/body/div[2]/div[2]/div[4]/form/div/div/div[1]/div[2]/h4");
+       try{
+           ExplicitWait(driver, "html/body/div[2]/div[2]/div[4]/form/div/div/div[1]/div[2]/h4");
+       }catch (Exception r){
+           try{
+           driver.navigate().refresh();
+           ExplicitWait(driver, "html/body/div[2]/div[2]/div[4]/form/div/div/div[1]/div[2]/h4");
+           }catch (Exception t){
+               System.out.println("Erro timeout Checkout "+t);
+           }
+                System.out.println("TimeOut para carregar formas de pagamento "+r);
+                Thread.sleep(1000); 
+                driver.close();//Fecha navegador.
+       }
+       try{
+           driver.findElement(By.id("retarifacaoAir")).isDisplayed();//Valida o poupup de tarifas.
+           GrabScreenShot (driver);//Print da tela.
+           driver.findElement(By.xpath("html/body/div[2]/div[2]/div[3]/div[2]/button[2]")).click();//Clica em Continuar.
+       }catch (Exception g){
+           System.out.println("Continuar "+g);
+            }
         driver.findElement(By.xpath("html/body/div[1]/div[2]/div[4]/form/div/div/section/div[1]/ul/li/div[1]/label[1]/input")).sendKeys("Qamili");
         driver.findElement(By.xpath("html/body/div[1]/div[2]/div[4]/form/div/div/section/div[1]/ul/li/div[1]/label[2]/input")).sendKeys("Munizz");
         driver.findElement(By.xpath("html/body/div[1]/div[2]/div[4]/form/div/div/section/div[1]/ul/li/div[2]/label/input")).sendKeys("12/12/1990");
@@ -113,11 +142,26 @@ public class SubAirProdInt {
         driver.findElement(By.xpath("html/body/div[1]/div[2]/div[4]/form/div/div/div[2]/div[3]/div/div[2]/div[5]/label[3]/input")).sendKeys("Altino");
         driver.findElement(By.xpath("html/body/div[1]/div[2]/div[4]/form/div/div/div[3]/label/input")).click();
             Thread.sleep(3000);//Aguarda preenchimento da rua.
-        driver.findElement(By.xpath("html/body/div[1]/div[2]/div[4]/form/div/div/div[5]/button")).click();//clica em comprar
+        driver.findElement(By.xpath("html/body/div[1]/div[2]/div[4]/form/div/div/div[5]/button")).click();//Clica em comprar
         Thread.sleep(2000);//Aguarda preenchimento da rua.
-        ExplicitWait(driver, "html/body/form/div/div/div/div[2]/div/div/div[1]/p/span/strong/a");//aguarda reserva aparecer
+        try{
+            ExplicitWait(driver, "html/body/form/div/div/div/div[2]/div/div/div[1]/p/span/strong/a");//Aguarda reserva aparecer
+        }catch(Exception s){
+            System.out.println("Timeout reserva "+s);
+        }
         GrabScreenShot (driver);//print da tela
         reservasTxt(driver);
+        try{
+            Thread.sleep(7000); 
+            //ExplicitWait(driver, "WLS_smartButtonTitle");
+            driver.findElement(By.id("WLS_smartButtonTitle")).isDisplayed();//Verifica se o poupUp é apresentado.
+            for (String handle : driver.getWindowHandles()) {
+            driver.switchTo().window(handle);
+            }
+            driver.findElement(By.xpath("html/body/div[2]/div/a")).click();//Fecha o PoupUp.
+        }catch(Exception f){
+            System.out.println("Não apresentou poupUp de Prêmio "+f);
+        }
    }
     public static void reservasTxt(WebDriver driver) throws IOException {
     Calendar calendar = new GregorianCalendar();
@@ -127,7 +171,7 @@ public class SubAirProdInt {
     calendar.setTime(date);
     System.out.println(out.format(calendar.getTime()));
     String HostName = System.getProperty("user.name");
-        try (FileWriter arq = new FileWriter("C:\\Users\\"+HostName+"\\Documents\\"+hora+"-SubAirProdInt.txt")) {
+        try (FileWriter arq = new FileWriter("C:\\Users\\"+HostName+"\\Documents\\"+hora+"-SubAir_ProdInt.txt")) {
             PrintWriter gravarArq = new PrintWriter(arq);
             WebElement elemento = driver.findElement(By.xpath("html/body/form/div/div/div/div[2]/div/div/div[1]/p/span/strong/a"));
             gravarArq.printf(elemento.getText());
@@ -145,7 +189,7 @@ public static void GrabScreenShot(WebDriver driver) throws IOException{
        calendar.setTime(x);
        String data = formataData.format(x);
        String HostName = System.getProperty("user.name");
-       FileUtils.copyFile(print, new File("C:\\Users\\"+HostName+"\\Pictures\\"+data+"-SubAirProdInt.jpg"));
+       FileUtils.copyFile(print, new File("C:\\Users\\"+HostName+"\\Pictures\\"+data+"-SubAir_ProdInt.jpg"));
    }
 public static void GrabScreenShotErro(WebDriver driver) throws IOException{
        System.out.println("Realizado print");
@@ -156,6 +200,6 @@ public static void GrabScreenShotErro(WebDriver driver) throws IOException{
        calendar.setTime(x);
        String data = formataData.format(x);
        String HostName = System.getProperty("user.name");
-       FileUtils.copyFile(print, new File("C:\\Users\\"+HostName+"\\Pictures\\"+data+"-SubAirProdInt_Erro.jpg"));
+       FileUtils.copyFile(print, new File("C:\\Users\\"+HostName+"\\Pictures\\"+data+"-SubAir_ProdInt_Erro.jpg"));
    }
 }

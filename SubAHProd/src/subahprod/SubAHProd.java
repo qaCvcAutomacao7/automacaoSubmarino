@@ -23,38 +23,18 @@ public class SubAHProd {
         System.setProperty("webdriver.gecko.driver", "C:\\geckodriver-v0.10.0-win64\\geckodriver.exe");
         WebDriver driver= new FirefoxDriver();
         //Home A+H Nac
-        try{
-                openHome(driver);
-            }catch (InterruptedException | IOException h){
-                System.out.println("Falha preenchimento Home");
-                GrabScreenShotErro(driver);
-                driver.navigate().refresh();
-                openHome(driver);
-            }
-        //MasterPrice
-        try{
-            masterPrice(driver);
-            }catch (InterruptedException | IOException m){
-            System.out.println("Erro na MasterPrice");
-            GrabScreenShotErro(driver);
-            driver.navigate().refresh();
-            masterPrice(driver);
-            }
-        //CheckOut
-        try{
+        openHome(driver);
+        masterPrice(driver);
         checkout(driver);
-        }catch (InterruptedException | IOException k){
-            System.out.println("Erro na checkout");
-            GrabScreenShotErro(driver);
-            driver.navigate().refresh();
-            checkout(driver);
-    }
-        Thread.sleep(1000); 
-        driver.quit();
+        
+            Thread.sleep(1000); 
+            //driver.quit();apresenta poupup de erro
+            driver.close();
     }
     //Metodo Home A+H Nac
      private static void openHome(WebDriver driver) throws InterruptedException, IOException {
         driver.get("http://www.submarinoviagens.com.br/index.aspx"); 
+        driver.manage().deleteAllCookies();
         driver.findElement(By.xpath("html/body/form/div/div[1]/div[2]/div[2]/ul/li[1]")).click();//A+H Nac
         driver.findElement(By.id("txtOrigin")).clear();
         driver.findElement(By.id("txtOrigin")).sendKeys("sao");
@@ -63,39 +43,84 @@ public class SubAHProd {
         driver.findElement(By.id("txtDestination")).sendKeys("rio");    
                 Thread.sleep(4000);
           //Pega a data atual (ida) e acrescentar 88 dias e converter para String.
-        Date x = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(x);
-        c.add(Calendar.DATE, +30);
-        c.add(Calendar.DAY_OF_MONTH, +30);
-        c.add(Calendar.DAY_OF_MONTH, +28);
-        x = c.getTime();
-        //Pegar a data atual (volta)e acrescentar 90 dias e converter para String.
-        Date y = new Date();
-        c.setTime(y);
-        c.add(Calendar.DATE, +30);
-        c.add(Calendar.DAY_OF_MONTH, +30);
-        c.add(Calendar.DAY_OF_MONTH, +30);
-        y = c.getTime();
-        SimpleDateFormat formataData = new SimpleDateFormat("dd/MM/yyyy");
-        String ida = formataData.format(x);
-        String volta = formataData.format(y); 
-        driver.findElement(By.id("txtOutboundDate")).sendKeys(ida);//data ida
-        driver.findElement(By.id("txtInboundDate")).sendKeys(volta);//data volta
-        driver.findElement(By.id("btnSearch")).click();//Comprar
-        GrabScreenShot (driver);//print da tela
+                Date x = new Date();
+                Calendar c = Calendar.getInstance();
+                c.setTime(x);
+                c.add(Calendar.DATE, +30);
+                c.add(Calendar.DAY_OF_MONTH, +30);
+                c.add(Calendar.DAY_OF_MONTH, +28);
+                x = c.getTime();
+                //Pegar a data atual (volta)e acrescentar 90 dias e converter para String.
+                Date y = new Date();
+                c.setTime(y);
+                c.add(Calendar.DATE, +30);
+                c.add(Calendar.DAY_OF_MONTH, +30);
+                c.add(Calendar.DAY_OF_MONTH, +30);
+                y = c.getTime();
+                SimpleDateFormat formataData = new SimpleDateFormat("dd/MM/yyyy");
+                String ida = formataData.format(x);
+                String volta = formataData.format(y); 
+                driver.findElement(By.id("txtOutboundDate")).sendKeys(ida);//Data ida
+                driver.findElement(By.id("txtInboundDate")).sendKeys(volta);//Data volta
+                driver.findElement(By.id("btnSearch")).click();//Comprar
+        try{
+            driver.findElement(By.id("dialogModal")).isDisplayed();
+            System.out.println("Apresentado poupup de erro no motor de busca");
+            GrabScreenShotErro(driver);
+            Thread.sleep(1000); 
+            driver.quit();
+        }catch(Exception a){
+            GrabScreenShot (driver);//Print da tela    
+            System.out.println("Efetuado print de Sucesso "+a);
+        }
     }
      //Metodo Master Price
    private static void masterPrice(WebDriver driver) throws InterruptedException, IOException {
-        ExplicitWait(driver, "html/body/form/div/div/div/div[2]/div[2]/div[3]/div/div[1]/h2");
-        driver.findElement(By.xpath("html/body/form/div/div/div/div[2]/div[1]/div[2]/div/div/ul/li[5]/ul/li[2]/input")).click();//desabilita checkbox Gol
-        driver.findElement(By.xpath("html/body/form/div/div/div/div[2]/div[1]/div[2]/div/div/ul/li[7]/div/a[1]")).click();//Aplica filtro
-        Thread.sleep(3000);
-        driver.findElement(By.id("packageBuy")).click();//Comprar 
-        GrabScreenShot (driver);//print da tela
+       try{
+        ExplicitWait(driver, "html/body/form/div/div/div/div[2]/div[2]/div[3]/div/div[1]/h2");//Aguarda Matriz de Preço
+       }catch(Exception b){
+           try{
+               driver.navigate().refresh();
+               ExplicitWait(driver, "html/body/form/div/div/div/div[2]/div[2]/div[3]/div/div[1]/h2");//Aguarda Matriz de Preço
+           }catch(Exception l){
+               System.out.println("Erro "+l);
+           }
+                System.out.println("Erro "+b);
+                driver.findElement(By.className("error1")).isDisplayed();//Sem disponibilidade
+                GrabScreenShotErro(driver);
+                    System.out.println("Feito print de erro.");
+                    Thread.sleep(1000); 
+                    driver.quit();
+       }
+                driver.findElement(By.xpath("html/body/form/div/div/div/div[2]/div[1]/div[2]/div/div/ul/li[5]/ul/li[2]/input")).click();//desabilita checkbox Gol
+                driver.findElement(By.xpath("html/body/form/div/div/div/div[2]/div[1]/div[2]/div/div/ul/li[7]/div/a[1]")).click();//Aplica filtro
+                Thread.sleep(10000);//Aguarda refazer a pesquisa
+                driver.findElement(By.id("packageBuy")).click();//Comprar 
+                GrabScreenShot (driver);//print da tela
         }
    private static void checkout(WebDriver driver) throws InterruptedException, IOException {
-       ExplicitWait(driver, "html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/h4");
+        //Aguarda 60  segundos para carregar a checkout
+        try{
+            ExplicitWait(driver, "html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/h4");     
+        }catch(Exception h){
+            try{
+                System.out.println("Erro timeout "+h);
+                driver.navigate().refresh();
+                ExplicitWait(driver, "html/body/div[2]/div[2]/div[4]/form/div/div[1]/div[2]/h4");     
+            }catch(Exception m){
+                System.out.println("Erro timeout "+m);
+                Thread.sleep(1000); 
+                driver.close();//Fecha navegador.
+            }
+        }
+        try{
+           //Valida o poupup de tarifas
+       driver.findElement(By.id("retarifacaoAir")).isDisplayed();
+       GrabScreenShot (driver);//print da tela
+       driver.findElement(By.xpath("html/body/div[2]/div[2]/div[3]/div[2]/button[2]")).click();
+       }catch (Exception g){
+           System.out.println("Continuar "+g);
+       }
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/section/div[1]/ul/li[1]/div[1]/label[1]/input")).sendKeys("Qamyly");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/section/div[1]/ul/li[1]/div[1]/label[2]/input")).sendKeys("Munizz");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/section/div[1]/ul/li[1]/div[2]/label/input")).sendKeys("12/12/1990");
@@ -121,10 +146,27 @@ public class SubAHProd {
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[2]/div/div/label[2]/input")).sendKeys("timesite@cvc.com.br");
         driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[3]/label/input")).click();
             Thread.sleep(3000);//Aguarda preenchimento da rua.
-        driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[5]/button")).click();//clica em comprar
-        ExplicitWait(driver, "html/body/form/div/div/div/div[2]/div/div/div[1]/p/span/strong/a");//aguarda reserva aparecer
+        driver.findElement(By.xpath("html/body/div[2]/div[2]/div[4]/form/div/div[5]/button")).click();//Clica em Comprar.
+        try{
+            ExplicitWait(driver, "html/body/form/div/div/div/div[2]/div/div/div[1]/p/span/strong/a");//Aguarda reserva aparecer.    
+        }catch(Exception n){
+            System.out.println("Timeout reserva "+n);
+        }
         GrabScreenShot (driver);//print da tela
-        reservasTxt(driver);
+            reservasTxt(driver);
+        try{
+            Thread.sleep(7000);//Aguarda aparecer poupUp
+            //ExplicitWait(driver, "WLS_smartButtonTitle");
+            driver.findElement(By.id("WLS_smartButtonTitle")).isDisplayed();
+            for (String handle : driver.getWindowHandles()) {
+            driver.switchTo().window(handle);
+            }
+            driver.findElement(By.xpath("html/body/div[2]/div/a")).click();
+        }catch(Exception f){
+            System.out.println("Não apresentou poupUp de Prêmio "+f);
+        }
+        
+        
    }
     public static void reservasTxt(WebDriver driver) throws IOException {
     Calendar calendar = new GregorianCalendar();
@@ -133,33 +175,36 @@ public class SubAHProd {
     String hora = out.format(date);
     calendar.setTime(date);
     System.out.println(out.format(calendar.getTime()));
-        try (FileWriter arq = new FileWriter("C:\\Users\\subt000079\\Documents\\"+hora+"-SubAeHProdNac.txt")) {
+    String HostName = System.getProperty("user.name");
+        try (FileWriter arq = new FileWriter("C:\\Users\\"+HostName+"\\Documents\\"+hora+"-SubAeH_ProdNac.txt")) {
             PrintWriter gravarArq = new PrintWriter(arq);
             WebElement elemento = driver.findElement(By.xpath("html/body/form/div/div/div/div[2]/div/div/div[1]/p/span/strong/a"));
             gravarArq.printf(elemento.getText());
         }
   }
-    public static void ExplicitWait (WebDriver driver, String text){
+    public static void ExplicitWait (WebDriver driver, String text) throws IOException{
         (new WebDriverWait (driver, 60)).until(ExpectedConditions.elementToBeClickable(By.xpath(text)));
     }
      public static void GrabScreenShot(WebDriver driver) throws IOException{
-       System.out.println("automationsubprod.AutomationSubProd.ScreenShot()");
+       System.out.println("Print Sucesso");
        File print =((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
        Calendar calendar = new GregorianCalendar();
        Date x = new Date();
        SimpleDateFormat formataData = new SimpleDateFormat("HHmmss");
        calendar.setTime(x);
        String data = formataData.format(x);
-       FileUtils.copyFile(print, new File("C:\\Users\\subt000079\\Pictures\\"+data+"-SubAeHProdNac.jpg"));
+       String HostName = System.getProperty("user.name");
+       FileUtils.copyFile(print, new File("C:\\Users\\"+HostName+"\\Pictures\\"+data+"-SubAeH_ProdNac.jpg"));
    }
      public static void GrabScreenShotErro(WebDriver driver) throws IOException{
-       System.out.println("automationsubprod.AutomationSubProd.ScreenShot()");
+       System.out.println("Print Erro");
        File print =((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
        Calendar calendar = new GregorianCalendar();
        Date x = new Date();
        SimpleDateFormat formataData = new SimpleDateFormat("HHmmss");
        calendar.setTime(x);
        String data = formataData.format(x);
-       FileUtils.copyFile(print, new File("C:\\Users\\subt000079\\Pictures\\"+data+"-SubAeHProdNac_Erro.jpg"));
+       String HostName = System.getProperty("user.name");
+       FileUtils.copyFile(print, new File("C:\\Users\\"+HostName+"\\Pictures\\"+data+"-SubAeH_ProdNac_Erro.jpg"));
    }
 }
